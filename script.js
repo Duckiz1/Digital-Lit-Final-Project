@@ -46,17 +46,74 @@ document.addEventListener('DOMContentLoaded', () => {
   // Checklist progress tracking
   const checkboxes = document.querySelectorAll('.tip-checkbox');
   const progressCount = document.getElementById('progress-count');
+  let hasTriggeredCelebration = false;
   
   function updateProgress() {
     const checked = document.querySelectorAll('.tip-checkbox:checked').length;
     if (progressCount) {
       progressCount.textContent = checked;
     }
+    
+    // Trigger party popper effect when all checkboxes are checked
+    if (checked === checkboxes.length && !hasTriggeredCelebration) {
+      hasTriggeredCelebration = true;
+      triggerPartyPopper();
+    } else if (checked < checkboxes.length) {
+      hasTriggeredCelebration = false;
+    }
   }
 
   checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', updateProgress);
   });
+
+  // Party popper effect
+  function triggerPartyPopper() {
+    const colors = ['#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'];
+    const particleCount = 100;
+    
+    for (let i = 0; i < particleCount; i++) {
+      createParticle(colors);
+    }
+  }
+
+  function createParticle(colors) {
+    const particle = document.createElement('div');
+    particle.className = 'party-particle';
+    
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const size = Math.random() * 8 + 4;
+    const startX = Math.random() * window.innerWidth;
+    const startY = -10;
+    const endX = (Math.random() - 0.5) * 400;
+    const rotation = Math.random() * 720 + 360;
+    const duration = Math.random() * 2 + 2;
+    const delay = Math.random() * 0.5;
+    
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.backgroundColor = color;
+    particle.style.left = `${startX}px`;
+    particle.style.top = `${startY}px`;
+    particle.style.setProperty('--end-x', `${endX}px`);
+    particle.style.setProperty('--rotation', `${rotation}deg`);
+    particle.style.animationDuration = `${duration}s`;
+    particle.style.animationDelay = `${delay}s`;
+    
+    // Random shape (circle or square)
+    if (Math.random() > 0.5) {
+      particle.style.borderRadius = '50%';
+    }
+    
+    document.body.appendChild(particle);
+    
+    // Remove particle after animation
+    setTimeout(() => {
+      if (particle.parentNode) {
+        particle.remove();
+      }
+    }, (duration + delay) * 1000);
+  }
 
   // Scroll animations - enter and exit
   const observerOptions = {
